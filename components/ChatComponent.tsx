@@ -1,16 +1,16 @@
 'use client';
 
 //Components/ChatComponent.tsx
-import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import {useParams} from "next/navigation";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
-import { Socket, io } from "socket.io-client";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
-import { useSelector } from "react-redux";
+import {Socket, io} from "socket.io-client";
+import {DefaultEventsMap} from "@socket.io/component-emitter";
+import {useSelector} from "react-redux";
 import {RootState} from "@/store/store";
 
 // Define the backend server URL from environment variables
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? "";
+// const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? "";
 
 // Initialize a Socket.io client instance
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
@@ -30,7 +30,7 @@ const ChatComponent = () => {
 // Establish a Socket.io connection when the component mounts
     useEffect(() => {
         // Initialize a Socket.io client instance and connect it to the server.
-        socket = io(BACKEND_URL);
+        socket = io('http://localhost:8283');
         socket.on("connect", () => {
             // When the connection is established, this callback function is executed.
 
@@ -42,9 +42,9 @@ const ChatComponent = () => {
 // Listen for incoming messages and update the chat list
     useEffect(() => {
         // This code listens for incoming messages from the server.
-        socket.on("recieve-message", (broadcastMessage: ChatListProps) => {
+        socket.on("receive-message", (broadcastMessage: ChatListProps) => {
             // When a message is received, this event is triggered.
-
+            console.log("message: ", broadcastMessage)
             if (broadcastMessage.username !== username) {
                 const temp = chatList ?? [];
                 // Add the received message to the chat list.
@@ -59,12 +59,12 @@ const ChatComponent = () => {
         // When the user sends a message, this function is called.
 
         // Emit a "send-message" event to the server with the message and username.
-        socket.emit("send-message", { message, username }, roomId);
+        socket.emit("send-message", {message, username}, roomId);
 
         const temp = chatList ?? [];
         if (message !== "") {
             // Add the sent message to the chat list.
-            setChatList([...temp, { message, username }]);
+            setChatList([...temp, {message, username}]);
         }
         setMessage("");
     };
@@ -75,7 +75,7 @@ const ChatComponent = () => {
                 <p>Room id: {roomId}</p>
                 <p>username: {username}</p>
             </div>
-            <div className='border' />
+            <div className='border'/>
             <div className='px-4 h-full'>
                 {chatList?.map((item, index) => {
                     if (item.username !== username) {
@@ -103,7 +103,7 @@ const ChatComponent = () => {
                     );
                 })}
             </div>
-            <div className='border' />
+            <div className='border'/>
             <div className='flex  p-4 '>
                 <input
                     placeholder='message'
